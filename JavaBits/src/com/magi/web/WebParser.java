@@ -8,6 +8,11 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+/**
+ * WebParser - Relies on HTTPClient 4.2
+ * 
+ * @author patkins
+ */
 public class WebParser {
 
 	private String url;
