@@ -46,8 +46,8 @@
         <!-- Apache HTTP Client -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
-	    <artifactId>httpclient</artifactId>
-	    <version>4.2.3</version>
+	    	<artifactId>httpclient</artifactId>
+	    	<version>4.2.3</version>
         </dependency>
         <!-- Testing -->
         <dependency>
