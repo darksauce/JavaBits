@@ -27,7 +27,7 @@ public class ImportCSVToTable extends AbstractImportExport
 	}
 	
 	/**
-	 * USAGE: QIAImportCSV <filename> <tablename>
+	 * USAGE: ImportCSVToTable <filename> <tablename>
 	 * 
 	 * @param args (0) Filename (1) Tablename
 	 */
