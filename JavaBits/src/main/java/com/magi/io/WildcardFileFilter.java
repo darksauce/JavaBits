@@ -5,14 +5,19 @@ import java.io.FileFilter;
 
 public class WildcardFileFilter implements FileFilter {
 
-    private String  filePattern;
-    private boolean includeSubdirs;
+    private String[] filePatterns;
+    private boolean  includeSubdirs;
 
     public WildcardFileFilter(String filePattern, boolean includeSubdirs) {
-        this.filePattern    = filePattern;
+        this.filePatterns   = new String[] { filePattern };
         this.includeSubdirs = includeSubdirs;
     }
 
+    public WildcardFileFilter(String[] filePatterns, boolean includeSubdirs) {
+        this.filePatterns    = filePatterns;
+        this.includeSubdirs = includeSubdirs;
+    }
+    
     public void setIncludeSubdirs(boolean includeSubdirs) {
         this.includeSubdirs = includeSubdirs;
     }
@@ -21,22 +26,38 @@ public class WildcardFileFilter implements FileFilter {
         return includeSubdirs;
     }
 
-    public String getFilePattern() {
-        return filePattern;
+    public String[] getFilePatterns() {
+        return filePatterns;
     }
 
     public void setFilePattern(String pattern) {
-        this.filePattern = pattern;
+        this.filePatterns = new String[] { pattern };
     }
 
+    public void setFilePatterns(String[] patterns) {
+        this.filePatterns = patterns;
+    }
+    
     public boolean accept(File pathname) {
 
         if (pathname.isDirectory())
             return includeSubdirs;
+        
+        String name = pathname.getName();
 
-        boolean seek = false;
-        String  name = pathname.getName();
+        for (String filePattern: filePatterns) {
+            if (isPatternMatch(name, filePattern)) {
+            	return true;
+            }
+        }
+        
+        return false;
+    }
 
+    private boolean isPatternMatch(String name, String filePattern) {
+    	boolean seek = false;
+    	boolean wasseek = false;
+    	int seek_i = 0;
         int n = 0;
         for (int i = 0; i < filePattern.length(); i++) {
 
@@ -48,6 +69,7 @@ public class WildcardFileFilter implements FileFilter {
             switch (p) {
                 case '*':
                     seek = true;
+                    seek_i = i;
                     break;
                 case '?':
                     n++;
@@ -56,14 +78,23 @@ public class WildcardFileFilter implements FileFilter {
                 default:
                     if (name.charAt(n) == p) {
                         n++;
+                        wasseek = seek;
                         seek = false;
                     }
                     else if (seek) {
                         n++;
                         i--;
                     }
-                    else
-                        return false;
+                    else {
+                    	if (wasseek) {
+                    		seek = wasseek;
+                    		wasseek = false;
+                    		i = seek_i;
+                    	}
+                    	else {
+                            return false;
+                    	}
+                    }
                     break;
             }
         }
@@ -72,9 +103,9 @@ public class WildcardFileFilter implements FileFilter {
             return false;
 
         return true;
-    }
+	}
 
-    public static void main(String[] args) {
+	public static void main(String[] args) {
         WildcardFileFilter wff = new WildcardFileFilter("*.jpg", false);
         System.out.println("*.jpg - myimage.jpg = " + wff.accept(new File("myimage.jpg")));
         System.out.println("*.jpg - myimage.jpeg = " + wff.accept(new File("myimage.jpeg")));
@@ -92,5 +123,11 @@ public class WildcardFileFilter implements FileFilter {
         wff = new WildcardFileFilter("h?l?o.jpg", false);
         System.out.println("h?l?o.jpg - hello.jpg = " + wff.accept(new File("hello.jpg")));
         System.out.println("h?l?o.jpg - helllo.jpg = " + wff.accept(new File("helllo.jpg")));
+        
+        wff = new WildcardFileFilter("au.com.magi*.jar", false);
+        System.out.println("au.com.magi*.jar - au.com.magi.wildcardapp.jar = " + wff.accept(new File("au.com.magi.wildcardapp.jar")));
+
+        wff = new WildcardFileFilter("*.jar", false);
+        System.out.println("*.jar - au.com.magi.wildcardapp.jar = " + wff.accept(new File("au.com.magi.wildcardapp.jar")));
     }
 }

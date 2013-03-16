@@ -58,6 +58,25 @@ public class FileScanner {
 
     /**
      * Create a File Scanner for the directory specified.
+     * Uses the DOS-style filePattern passed in, and will include sub-directories
+     * if specified.
+     *
+     * @param path the directory to scan.
+     * @param filePatterns DOS-style file patterns to match files on.
+     * @param sorted true if the file list should be alphabetically sorted.
+     * @param includeSubdirs true if sub-directories should be scanned recursively.
+     */
+    public FileScanner( String path, String[] filePatterns, boolean sorted,
+                        boolean includeSubdirs ) {
+        this.path           = new File(path);
+        this.fileFilter     = new WildcardFileFilter(filePatterns, includeSubdirs);
+        this.sorted         = sorted;
+        this.includeSubdirs = includeSubdirs;
+        this.fileSorter     = new FileScannerSort();
+    }
+    
+    /**
+     * Create a File Scanner for the directory specified.
      * Uses the custom FileFilter object passed in, and will include
      * sub-directories if specified.
      *
@@ -74,6 +93,10 @@ public class FileScanner {
         this.fileSorter     = new FileScannerSort();
     }
 
+    public File getPath() {
+    	return this.path;
+    }
+    
     /**
      * Returns true if sub-directories are being scanned recursively.
      *
@@ -169,9 +192,9 @@ public class FileScanner {
      *
      * @return pattern String or null.
      */
-    public String getFilePattern() {
+    public String[] getFilePatterns() {
         if (fileFilter instanceof WildcardFileFilter) {
-            return ((WildcardFileFilter)fileFilter).getFilePattern();
+            return ((WildcardFileFilter)fileFilter).getFilePatterns();
         }
 
         return null;
