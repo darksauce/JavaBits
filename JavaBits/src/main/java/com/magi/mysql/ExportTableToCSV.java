@@ -111,9 +111,13 @@ public class ExportTableToCSV extends AbstractImportExport
 		}
 	}
 
+	/** 
+	 * Quote text that contains a comma or a double-quote, and double-quotes inside text
+	 * are converted to double-quote-double-quote. 
+	 */
 	private String quoteTextIfNecessary(String text) {
-		if (text.indexOf(',') != -1) {
-			return "\"" + text + "\"";
+		if (text.indexOf(',') != -1 || text.indexOf('\"') != -1) {
+			return "\"" + text.replaceAll("\"", "\"\"") + "\"";
 		}
 		return text;
 	}	

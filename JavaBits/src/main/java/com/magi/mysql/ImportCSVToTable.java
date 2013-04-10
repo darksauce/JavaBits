@@ -175,7 +175,7 @@ public class ImportCSVToTable extends AbstractImportExport
 			
 			while ((line = reader.readLine()) != null)
 			{
-				csvData.add(line.split(","));
+				csvData.add(quoteAwareLineSplit(line));
 			}
 			
 			return csvData;
@@ -186,4 +186,36 @@ public class ImportCSVToTable extends AbstractImportExport
 			if (fread != null) fread.close();
 		}
 	}
+
+	/** Split line data by commas, being aware of double-quotes that may be in use */
+	private String[] quoteAwareLineSplit(String line) {
+		boolean ignoreCommas = false; // used when quotes are found
+		StringBuffer buff = new StringBuffer();
+		List<String> data = new ArrayList<String>();
+		char prevChar = 0;
+		
+		for (int i = 0; i < line.length(); i++) {
+			if (line.charAt(i) == '\"') {
+				ignoreCommas = !ignoreCommas;
+				if (ignoreCommas && prevChar == '\"') {
+					buff.append(line.charAt(i));
+				}
+			}
+			else {
+				if (!ignoreCommas && line.charAt(i) == ',') {
+					data.add(buff.toString());
+					buff.delete(0, buff.length());
+				}
+				else {
+					buff.append(line.charAt(i));
+				}
+			}
+			
+			prevChar = line.charAt(i);
+		}
+		if (buff.length() > 0) {
+			data.add(buff.toString());
+		}
+		return data.toArray(new String[0]);
+	} 
 }
