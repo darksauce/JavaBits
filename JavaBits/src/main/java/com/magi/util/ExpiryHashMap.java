@@ -1,3 +1,5 @@
+/* Open Source Licensed under GNU LGPL 3.0
+ * See http://www.gnu.org/copyleft/lesser.html for details. */
 package com.magi.util;
 
 import java.util.ArrayList;
