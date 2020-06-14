@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import com.magi.app.listjars.handler.ListJarsSearchResultHandler;
 import com.magi.io.FileScannerImpl;
 
 /**
@@ -31,7 +32,7 @@ import com.magi.io.FileScannerImpl;
  * 
  * @author patkins
  */
-public class ListJars extends FileScannerImpl {
+public class ListJars extends FileScannerImpl implements ListJarsSearchResultHandler {
 
 	private static final boolean IS_SORTED = true;
 	private static final boolean INCLUDE_SUBDIRS = true;
@@ -64,7 +65,7 @@ public class ListJars extends FileScannerImpl {
 		}
 	}
 
-	protected void handleSearchResult(File jarfile, JarEntry entry) {
+	public void handleSearchResult(File jarfile, JarEntry entry) {
 		if (this.lastReported == null || !jarfile.equals(this.lastReported)) {
 		    System.out.println("\n" + jarfile.getAbsolutePath());
 		}
